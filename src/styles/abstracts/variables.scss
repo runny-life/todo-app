@@ -1,0 +1,32 @@
+/*Colors*/
+$color-dark: #000000;
+$color-white: #ffffff;
+$color-purple-100: #e3e4f1;
+$color-purple-300: #c8cbe7;
+$color-purple-600: #5b5e7e;
+$color-purple-700: #5b5e7e;
+$color-purple-800: #393a4b;
+$color-gray-50: #fafafa;
+$color-gray-300: #d1d2da;
+$color-gray-600: #9495a5;
+$color-navy-850: #9495a5;
+$color-navy-900: #25273d;
+$color-navy-950: #171823;
+$color-blue-500: #3a7cfd;
+$colors-gradient-1: linear-gradient(135deg, #5df 0%, #c058f3 100%);
+$colors-gradient-2: linear-gradient(135deg, #3710bd 0%, #a42395 100%);
+
+/*Fonts*/
+$font-family-base: 'Josefin Sans', sans-serif;
+
+/*Theme*/
+:root {
+  --bg: $color-gray-50;
+  --bg-gradient: $colors-gradient-1;
+  --card-bg: $color-white;
+  --text: $color-navy-850;
+  --text-muted: $color-gray-600;
+  --text-done: $color-gray-300;
+  --text-create: $color-purple-800;
+  --accent: $color-blue-500;
+}
