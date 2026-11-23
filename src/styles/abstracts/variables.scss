@@ -18,15 +18,3 @@ $colors-gradient-2: linear-gradient(135deg, #3710bd 0%, #a42395 100%);
 
 /*Fonts*/
 $font-family-base: 'Josefin Sans', sans-serif;
-
-/*Theme*/
-:root {
-  --bg: $color-gray-50;
-  --bg-gradient: $colors-gradient-1;
-  --card-bg: $color-white;
-  --text: $color-navy-850;
-  --text-muted: $color-gray-600;
-  --text-done: $color-gray-300;
-  --text-create: $color-purple-800;
-  --accent: $color-blue-500;
-}

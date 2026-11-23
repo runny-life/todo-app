@@ -1,0 +1,13 @@
+@use '../abstracts/variables' as *;
+
+:root {
+  --bg: #{$color-gray-50};
+  --bg-gradient: #{$colors-gradient-1};
+  --card-bg: #{$color-white};
+  --title: #{$color-white};
+  --text: #{$color-navy-850};
+  --text-muted: #{$color-gray-600};
+  --text-done: #{$color-gray-300};
+  --text-create: #{$color-purple-800};
+  --accent: #{$color-blue-500};
+}
