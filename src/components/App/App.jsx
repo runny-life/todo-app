@@ -13,6 +13,11 @@ function App() {
             <img src={iconMoon} alt="" />
           </button>
         </header>
+
+        <div className={styles.newTodo}>
+          <span className={styles.circle}></span>
+          <input className={styles.input} type="text" placeholder="Create a new todo..." />
+        </div>
       </main>
     </div>
   );
