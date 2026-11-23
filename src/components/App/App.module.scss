@@ -64,6 +64,10 @@
   box-shadow: $box-shadow;
 }
 
+.card {
+  position: relative;
+}
+
 .newTodo {
   display: flex;
   align-items: center;
@@ -184,6 +188,8 @@
 
 .delete {
   display: flex;
+  width: rem(20px);
+  height: rem(20px);
   transition:
     opacity 0.2s ease,
     visibility 0.2s ease,
@@ -197,4 +203,44 @@
     scale: 0;
     visibility: hidden;
   }
+}
+
+.footer {
+  @include text-preset-3;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: rem(44px);
+  padding-inline: rem(20px);
+
+  @include tablet {
+    padding-inline: rem(24px);
+  }
+}
+
+.filters {
+  @include flex-center;
+  @include x-center;
+  @include text-preset-2;
+
+  gap: rem(16px);
+  top: calc(100% + 16px);
+  width: 100%;
+  height: rem(48px);
+  border-radius: 5px;
+  background: var(--card-bg);
+  box-shadow: 0 35px 50px -15px rgba(194, 195, 214, 0.5);
+}
+
+.active {
+  color: var(--accent);
+}
+
+.hint {
+  @include text-preset-2;
+
+  margin-top: rem(104px);
+  text-align: center;
+  color: var(--text-muted);
 }
