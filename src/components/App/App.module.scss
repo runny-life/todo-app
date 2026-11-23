@@ -213,16 +213,20 @@
   justify-content: space-between;
   height: rem(44px);
   padding-inline: rem(20px);
+  text-wrap: nowrap;
 
   @include tablet {
+    @include text-preset-2;
+
     padding-inline: rem(24px);
+    height: rem(62px);
   }
 }
 
 .filters {
   @include flex-center;
   @include x-center;
-  @include text-preset-2;
+  @include text-preset-2-bold;
 
   gap: rem(16px);
   top: calc(100% + 16px);
@@ -231,6 +235,13 @@
   border-radius: 5px;
   background: var(--card-bg);
   box-shadow: 0 35px 50px -15px rgba(194, 195, 214, 0.5);
+
+  @include tablet {
+    position: static;
+    height: 100%;
+    border-radius: 0;
+    transform: translateX(0);
+  }
 }
 
 .active {
@@ -243,4 +254,8 @@
   margin-top: rem(104px);
   text-align: center;
   color: var(--text-muted);
+
+  @include tablet {
+    margin-top: rem(24px);
+  }
 }
