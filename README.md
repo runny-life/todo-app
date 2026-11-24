@@ -1,22 +1,28 @@
-# Frontend Mentor - Todo app
+# Frontend Mentor - Todo app solution
 
-![Design preview for the Todo app coding challenge](preview.jpg)
+This is a solution to
+the [Todo app challenge on Frontend Mentor](https://www.frontendmentor.io/challenges/todo-app-Su1_KokOW). Frontend
+Mentor challenges help you improve your coding skills by building realistic projects.
 
-## Welcome! 👋
+## Table of contents
 
-Thanks for checking out this front-end coding challenge.
+- [Overview](#overview)
+  - [The challenge](#the-challenge)
+  - [Screenshot](#screenshot)
+  - [Links](#links)
+- [My process](#my-process)
+  - [Built with](#built-with)
+  - [What I learned](#what-i-learned)
+  - [Continued development](#continued-development)
+  - [Useful resources](#useful-resources)
+  - [AI Collaboration](#ai-collaboration)
+- [Author](#author)
 
-[Frontend Mentor](https://www.frontendmentor.io) challenges help you improve your coding skills by building realistic projects.
+## Overview
 
-**To do this challenge, you need a good understanding of HTML, CSS and JavaScript.**
+### The challenge
 
-## The challenge
-
-Your challenge is to build out this todo app and get it looking as close to the design as possible.
-
-You can use any tools you like to help you complete the challenge. So if you've got something you'd like to practice, feel free to give it a go.
-
-Your users should be able to:
+Users should be able to:
 
 - View the optimal layout for the app depending on their device's screen size
 - See hover states for all interactive elements on the page
@@ -28,85 +34,100 @@ Your users should be able to:
 - Toggle light and dark mode
 - **Bonus**: Drag and drop to reorder items on the list
 
-### Want some support on the challenge? 
+### Screenshot
 
-[Join our community](https://www.frontendmentor.io/community) and ask questions in the **#help** channel.
+![Screenshot todo app](./screenshot.png)
 
-## Where to find everything
+### Links
 
-Your task is to build out the project to the designs inside the `/design` folder. You will find both a mobile and a desktop version of the design.
+- Solution URL: [GitHub Repo](https://github.com/runny-life/todo-app)
+- Live Site URL: [Live](https://runny-life.github.io/todo-app/)
 
-The designs are in JPG static format. Using JPGs will mean that you'll need to use your best judgment for styles such as `font-size`, `padding` and `margin`.
+## My process
 
-If you would like the Figma design file to inspect the design in more detail, you can [subscribe as a PRO member](https://www.frontendmentor.io/pro).
+### Built with
 
-You will find all the required assets in the `/images` folder. The assets are already optimized.
+- Semantic HTML5 markup
+- CSS custom properties (for light and dark themes)
+- Flexbox
+- Mobile-first workflow
+- [React](https://react.dev/) - JS library
+- [Vite](https://vite.dev/) - build tool and dev server
+- [SCSS Modules](https://sass-lang.com/) - scoped component styles, plus shared functions and mixins (`rem()`,
+  `fluid()`, `hover`, `tablet`)
+- [dnd-kit](https://docs.dndkit.com/) - drag and drop sorting
+- ESLint, Prettier, Husky and lint-staged - code quality checks on every commit
 
-There is also a `style-guide.md` file containing the information you'll need, such as color palette and fonts.
+### What I learned
 
-## Using AI coding assistants
+This was my first React project built from scratch, so most of the learning was about how React thinks about data.
 
-We've included two files to help you if you're using AI coding assistants (like Claude, GitHub Copilot, Cursor, etc.) while working on this challenge:
+**State is the single source of truth.** The list of todos lives in one `useState`, and everything else is calculated
+from it during rendering. For example, the filtered list and the "items left" counter are not stored separately, so they
+can never get out of sync:
 
-- `AGENTS.md` - Contains detailed instructions for AI assistants on how to help you with this challenge. It's tailored to this challenge's difficulty level, so the AI will provide guidance appropriate to your learning stage—offering more support for beginner challenges and encouraging more independence on advanced ones.
-- `CLAUDE.md` - A pointer file that directs Claude-based tools to the AGENTS.md instructions.
+```jsx
+const itemsLeft = todos.filter((todo) => !todo.completed).length;
 
-**How to use them:** You don't need to do anything! These files are automatically detected by most AI coding tools. The AI will read them and adjust its behavior to be a better learning partner—guiding you toward solutions rather than just giving you the answers.
+const visibleTodos = todos.filter((todo) => {
+  if (filter === 'active') return !todo.completed;
+  if (filter === 'completed') return todo.completed;
+  return true;
+});
+```
 
-**Note:** These files are designed to help you *learn*, not to do the work for you. The AI is instructed to ask questions, give hints, and explain concepts rather than writing complete solutions.
+**State is never mutated, only replaced.** Toggling and deleting create new arrays with `map` and `filter` instead of
+changing the old one:
 
-## Building your project
+```jsx
+setTodos(todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)));
+```
 
-Feel free to use any workflow that you feel comfortable with. Below is a suggested process, but do not feel like you need to follow these steps:
+**Themes with CSS variables and a data attribute.** All colors are CSS custom properties. The dark theme only overrides
+them under `[data-theme='dark']`, so switching the theme means changing one attribute on `<html>`. The choice is saved
+in `localStorage` with `useEffect`, and the initial value falls back to the system `prefers-color-scheme`.
 
-1. Initialize your project as a public repository on [GitHub](https://github.com/). Creating a repo will make it easier to share your code with the community if you need help. If you're not sure how to do this, [have a read-through of this Try Git resource](https://try.github.io/).
-2. Configure your repository to publish your code to a web address. This will also be useful if you need some help during a challenge as you can share the URL for your project with your repo URL. There are a number of ways to do this, and we provide some recommendations below.
-3. Look through the designs to start planning out how you'll tackle the project. This step is crucial to help you think ahead for CSS classes to create reusable styles.
-4. Before adding any styles, structure your content with HTML. Writing your HTML first can help focus your attention on creating well-structured content.
-5. Write out the base styles for your project, including general content styles, such as `font-family` and `font-size`.
-6. Start adding styles to the top of the page and work down. Only move on to the next section once you're happy you've completed the area you're working on.
+**Avoiding the theme flash.** `useEffect` runs after the first render, which caused a short flash of the light theme on
+reload. A tiny inline script in `index.html` sets `data-theme` before React starts, which fixes it.
 
-## Deploying your project
+**Other things I practiced:**
 
-As mentioned above, there are many ways to host your project for free. Our recommended hosts are:
+- Controlled inputs and handling form submit with `preventDefault`
+- Splitting a component and passing data and callbacks through props (`TodoItem`)
+- Lists with `key`
+- Drag and drop with `DndContext`, `SortableContext` and `useSortable`, using a distance threshold for the mouse and a
+  delay for touch, so clicks and page scrolling still work
+- Making long words wrap inside a flex item (`min-width: 0` + `overflow-wrap: anywhere`)
+- Writing commits in the Conventional Commits style
 
-- [GitHub Pages](https://pages.github.com/)
-- [Vercel](https://vercel.com/)
-- [Netlify](https://www.netlify.com/)
+### Continued development
 
-You can host your site using one of these solutions or any of our other trusted providers. [Read more about our recommended and trusted hosts](https://www.frontendmentor.io/guides/hosting-your-solution).
+- Save the todo list in `localStorage` so it survives a page reload
+- Split the styles into separate SCSS modules per component
+- Add a dedicated drag handle and bring back keyboard reordering (right now the keyboard sensor is off, because it
+  conflicts with the buttons inside each item)
+- Add tests for the todo logic with Vitest
 
-## Create a custom `README.md`
+### Useful resources
 
-We strongly recommend overwriting this `README.md` with a custom one. We've provided a template inside the [`README-template.md`](./README-template.md) file in this starter code.
+- [React documentation](https://react.dev/) - the best place to understand state, effects and rendering.
+- [dnd-kit documentation](https://docs.dndkit.com/) - explains sensors, contexts and the sortable preset.
+- [MDN: prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) - how to
+  read the system theme.
 
-The template provides a guide for what to add. A custom `README` will help you explain your project and reflect on your learnings. Please feel free to edit our template as much as you like.
+### AI Collaboration
 
-Once you've added your information to the template, delete this file and rename the `README-template.md` file to `README.md`. That will make it show up as your repository's README file.
+I used Claude as a step-by-step tutor. I'm still learning React, so I asked it to explain each step while I typed the
+code myself and committed after every working step.
 
-## Submitting your solution
+- **How I used it:** planning the order of work, explaining new concepts (`useState`, `useEffect`, props, drag and
+  drop), reviewing my code and debugging errors.
+- **What worked well:** getting a reason for every line, not just a solution. Reviews of my own code also caught small
+  issues, like an unused `--bg` variable and buttons without `type="button"`.
+- **What I had to do myself:** compare colors and sizes with the design and the style guide, test every step in the
+  browser and fix the differences. The code from an assistant is a starting point, not a guarantee.
 
-Submit your solution on the platform for the rest of the community to see. Follow our ["Complete guide to submitting solutions"](https://www.frontendmentor.io/guides/how-to-submit-solutions) for tips on how to do this.
+## Author
 
-Remember, if you're looking for feedback on your solution, be sure to ask questions when submitting it. The more specific and detailed you are with your questions, the higher the chance you'll get valuable feedback from the community.
-
-## Sharing your solution
-
-There are multiple places you can share your solution:
-
-1. Share your solution page in the **#finished-projects** channel of the [community](https://www.frontendmentor.io/community).
-2. Share on [X (formerly Twitter)](https://x.com/frontendmentor) and mention **@frontendmentor**, including the repo and live URLs in your post. We'd love to take a look at what you've built and help share it around.
-3. Share your solution on [LinkedIn](https://www.linkedin.com/company/frontend-mentor/).
-4. Blog about your experience building your project. Writing about your workflow, technical choices, and talking through your code is a brilliant way to reinforce what you've learned. Great platforms to write on are [dev.to](https://dev.to/), [Hashnode](https://hashnode.com/), and [CodeNewbie](https://community.codenewbie.org/).
-
-We provide templates to help you share your solution once you've submitted it on the platform. Please do edit them and include specific questions when you're looking for feedback.
-
-The more specific you are with your questions the more likely it is that another member of the community will give you feedback.
-
-## Got feedback for us?
-
-We love receiving feedback! We're always looking to improve our challenges and our platform. So if you have anything you'd like to mention, please email hi[at]frontendmentor[dot]io.
-
-This challenge is completely free. Please share it with anyone who will find it useful for practice.
-
-**Have fun building!** 🚀
+- Website - [GitHub](https://github.com/runny-life)
+- Frontend Mentor - [@runnt-life](https://www.frontendmentor.io/profile/runny-life)
