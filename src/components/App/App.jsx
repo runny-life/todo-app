@@ -1,9 +1,8 @@
 import styles from './App.module.scss';
 import iconMoon from '@/assets/icons/icon-moon.svg';
-import iconCheck from '@/assets/icons/icon-check.svg';
-import iconCross from '@/assets/icons/icon-cross.svg';
 import iconSun from '@/assets/icons/icon-sun.svg';
 import { useEffect, useState } from 'react';
+import TodoItem from '@/components/TodoItem/TodoItem.jsx';
 
 const getInitialTheme = () => {
   const saved = localStorage.getItem('theme');
@@ -94,27 +93,7 @@ function App() {
         <div className={styles.card}>
           <ul className={styles.list}>
             {visibleTodos.map((todo) => (
-              <li className={styles.item} key={todo.id}>
-                <button
-                  className={`${styles.circle} ${todo.completed ? styles.circleDone : ''}`}
-                  type="button"
-                  aria-label="Toggle todo"
-                  onClick={() => handleToggle(todo.id)}
-                >
-                  {todo.completed && <img src={iconCheck} alt="" />}
-                </button>
-                <span className={`${styles.text} ${todo.completed ? styles.textDone : ''}`}>
-                  {todo.text}
-                </span>
-                <button
-                  className={styles.delete}
-                  type="button"
-                  aria-label="Delete"
-                  onClick={() => handleDelete(todo.id)}
-                >
-                  <img src={iconCross} alt="" />
-                </button>
-              </li>
+              <TodoItem key={todo.id} todo={todo} onToggle={handleToggle} onDelete={handleDelete} />
             ))}
           </ul>
 
