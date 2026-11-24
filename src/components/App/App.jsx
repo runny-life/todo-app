@@ -21,6 +21,14 @@ function App() {
     setTodos([...todos, { id: Date.now(), text, completed: false }]);
     setNewText('');
   };
+  const handleToggle = (id) => {
+    setTodos(
+      todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)),
+    );
+  };
+  const handleDelete = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  };
 
   const itemsLeft = todos.filter((todo) => !todo.completed).length;
 
@@ -55,13 +63,19 @@ function App() {
                   className={`${styles.circle} ${todo.completed ? styles.circleDone : ''}`}
                   type="button"
                   aria-label="Toggle todo"
+                  onClick={() => handleToggle(todo.id)}
                 >
                   {todo.completed && <img src={iconCheck} alt="" />}
                 </button>
                 <span className={`${styles.text} ${todo.completed ? styles.textDone : ''}`}>
                   {todo.text}
                 </span>
-                <button className={styles.delete} type="button" aria-label="Delete">
+                <button
+                  className={styles.delete}
+                  type="button"
+                  aria-label="Delete"
+                  onClick={() => handleDelete(todo.id)}
+                >
                   <img src={iconCross} alt="" />
                 </button>
               </li>

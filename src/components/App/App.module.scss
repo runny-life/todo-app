@@ -169,6 +169,11 @@
       visibility: visible;
     }
   }
+
+  &:focus-within .delete {
+    scale: 1;
+    visibility: visible;
+  }
 }
 
 .text {
