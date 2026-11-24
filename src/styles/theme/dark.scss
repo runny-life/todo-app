@@ -1,0 +1,13 @@
+@use '../abstracts/variables' as *;
+
+[data-theme='dark'] {
+  --bg: #{$color-navy-950};
+  --card-bg: #{$color-navy-900};
+  --text: #{$color-purple-100};
+  --text-muted: #{$color-purple-600};
+  --text-done: #{$color-purple-700};
+  --text-create: #{$color-gray-600};
+  --text-hover: #{$color-purple-300};
+  --border: #{$color-purple-800};
+  --shadow-filters: 0 35px 50px -15px rgba(0, 0, 0, 0.5);
+}

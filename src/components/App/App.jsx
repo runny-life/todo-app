@@ -2,8 +2,15 @@ import styles from './App.module.scss';
 import iconMoon from '@/assets/icons/icon-moon.svg';
 import iconCheck from '@/assets/icons/icon-check.svg';
 import iconCross from '@/assets/icons/icon-cross.svg';
-import { useState } from 'react';
+import iconSun from '@/assets/icons/icon-sun.svg';
+import { useEffect, useState } from 'react';
 
+const getInitialTheme = () => {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light' || saved === 'dark') return saved;
+
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+};
 const FILTERS = [
   { value: 'all', label: 'All' },
   { value: 'active', label: 'Active' },
@@ -18,7 +25,16 @@ function App() {
   ]);
   const [newText, setNewText] = useState('');
   const [filter, setFilter] = useState('all');
+  const [theme, setTheme] = useState(getInitialTheme);
 
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('theme', theme);
+  });
+
+  const handleThemeToggle = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -54,8 +70,13 @@ function App() {
       <main className={styles.container}>
         <header className={styles.header}>
           <h1 className={styles.title}>TODO</h1>
-          <button className={styles.themeButton} type="button" aria-label="Toggle theme">
-            <img src={iconMoon} alt="" />
+          <button
+            className={styles.themeButton}
+            type="button"
+            aria-label="Toggle theme"
+            onClick={handleThemeToggle}
+          >
+            <img src={theme === 'light' ? iconMoon : iconSun} alt="" />
           </button>
         </header>
 

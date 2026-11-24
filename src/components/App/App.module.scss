@@ -20,6 +20,14 @@
   }
 }
 
+:global([data-theme='dark']) .hero {
+  background-image: url('@/assets/images/bg-mobile-dark.jpg');
+
+  @include tablet {
+    background-image: url('@/assets/images/bg-desktop-dark.jpg');
+  }
+}
+
 .container {
   position: relative;
   width: 100%;
@@ -247,7 +255,7 @@
   height: rem(48px);
   border-radius: 5px;
   background: var(--card-bg);
-  box-shadow: 0 35px 50px -15px rgba(194, 195, 214, 0.5);
+  box-shadow: var(--shadow-filters);
 
   @include tablet {
     position: static;
