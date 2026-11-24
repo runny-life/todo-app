@@ -2,8 +2,28 @@ import styles from './App.module.scss';
 import iconMoon from '@/assets/icons/icon-moon.svg';
 import iconCheck from '@/assets/icons/icon-check.svg';
 import iconCross from '@/assets/icons/icon-cross.svg';
+import { useState } from 'react';
 
 function App() {
+  const [todos, setTodos] = useState([
+    { id: 1, text: 'Complete online JavaScript course', completed: true },
+    { id: 2, text: 'Jog around the park 3x', completed: false },
+    { id: 3, text: '10 minutes meditation', completed: false },
+  ]);
+  const [newText, setNewText] = useState('');
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const text = newText.trim();
+    if (!text) return;
+
+    setTodos([...todos, { id: Date.now(), text, completed: false }]);
+    setNewText('');
+  };
+
+  const itemsLeft = todos.filter((todo) => !todo.completed).length;
+
   return (
     <div className={styles.page}>
       <div className={styles.hero}></div>
@@ -16,44 +36,40 @@ function App() {
           </button>
         </header>
 
-        <div className={styles.newTodo}>
+        <form className={styles.newTodo} onSubmit={handleSubmit}>
           <span className={styles.circle}></span>
-          <input className={styles.input} type="text" placeholder="Create a new todo..." />
-        </div>
+          <input
+            className={styles.input}
+            type="text"
+            placeholder="Create a new todo..."
+            value={newText}
+            onChange={(event) => setNewText(event.target.value)}
+          />
+        </form>
 
         <div className={styles.card}>
           <ul className={styles.list}>
-            <li className={styles.item}>
-              <button className={`${styles.circle} ${styles.circleDone}`}>
-                <img src={iconCheck} alt="" />
-              </button>
-              <span className={`${styles.text} ${styles.textDone}`}>
-                Complete online JavaScript course
-              </span>
-              <button className={styles.delete} type="button" aria-label="Delete">
-                <img src={iconCross} alt="" />
-              </button>
-            </li>
-
-            <li className={styles.item}>
-              <button className={styles.circle} />
-              <span className={styles.text}>Jog around the park 3x</span>
-              <button className={styles.delete} aria-label="Delete">
-                <img src={iconCross} alt="" />
-              </button>
-            </li>
-
-            <li className={styles.item}>
-              <button className={styles.circle} />
-              <span className={styles.text}>10 minutes meditation</span>
-              <button className={styles.delete} aria-label="Delete">
-                <img src={iconCross} alt="" />
-              </button>
-            </li>
+            {todos.map((todo) => (
+              <li className={styles.item} key={todo.id}>
+                <button
+                  className={`${styles.circle} ${todo.completed ? styles.circleDone : ''}`}
+                  type="button"
+                  aria-label="Toggle todo"
+                >
+                  {todo.completed && <img src={iconCheck} alt="" />}
+                </button>
+                <span className={`${styles.text} ${todo.completed ? styles.textDone : ''}`}>
+                  {todo.text}
+                </span>
+                <button className={styles.delete} type="button" aria-label="Delete">
+                  <img src={iconCross} alt="" />
+                </button>
+              </li>
+            ))}
           </ul>
 
           <div className={styles.footer}>
-            <span>2 items left</span>
+            <span>{itemsLeft} items left</span>
             <div className={styles.filters}>
               <button className={styles.active} type="button">
                 All
@@ -61,7 +77,9 @@ function App() {
               <button type="button">Active</button>
               <button type="button">Completed</button>
             </div>
-            <button className={styles.clear}>Clear Completed</button>
+            <button className={styles.clear} type="button">
+              Clear Completed
+            </button>
           </div>
         </div>
         <p className={styles.hint}>Drag and drop to reorder list</p>
