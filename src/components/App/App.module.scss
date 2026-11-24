@@ -188,6 +188,8 @@
   @include text-preset-3;
 
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
 
   @include tablet {
     @include text-preset-1;
