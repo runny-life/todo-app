@@ -3,6 +3,15 @@ import iconMoon from '@/assets/icons/icon-moon.svg';
 import iconSun from '@/assets/icons/icon-sun.svg';
 import { useEffect, useState } from 'react';
 import TodoItem from '@/components/TodoItem/TodoItem.jsx';
+import {
+  closestCenter,
+  DndContext,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
 const getInitialTheme = () => {
   const saved = localStorage.getItem('theme');
@@ -31,6 +40,19 @@ function App() {
     localStorage.setItem('theme', theme);
   });
 
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
+  );
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = todos.findIndex((todo) => todo.id === active.id);
+    const newIndex = todos.findIndex((todo) => todo.id === over.id);
+    setTodos(arrayMove(todos, oldIndex, newIndex));
+  };
   const handleThemeToggle = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
@@ -91,11 +113,27 @@ function App() {
         </form>
 
         <div className={styles.card}>
-          <ul className={styles.list}>
-            {visibleTodos.map((todo) => (
-              <TodoItem key={todo.id} todo={todo} onToggle={handleToggle} onDelete={handleDelete} />
-            ))}
-          </ul>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={visibleTodos.map((todo) => todo.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <ul className={styles.list}>
+                {visibleTodos.map((todo) => (
+                  <TodoItem
+                    key={todo.id}
+                    todo={todo}
+                    onToggle={handleToggle}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </ul>
+            </SortableContext>
+          </DndContext>
 
           <div className={styles.footer}>
             <span>{itemsLeft} items left</span>

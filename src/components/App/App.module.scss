@@ -282,3 +282,10 @@
     margin-top: rem(24px);
   }
 }
+
+.dragging {
+  position: relative;
+  z-index: 1;
+  background: var(--card-bg);
+  box-shadow: $box-shadow;
+}
