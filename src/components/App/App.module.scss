@@ -226,6 +226,14 @@
     padding-inline: rem(24px);
     height: rem(62px);
   }
+
+  button:not(.active) {
+    transition: color 0.2s ease;
+
+    @include hover {
+      color: var(--text-hover);
+    }
+  }
 }
 
 .filters {

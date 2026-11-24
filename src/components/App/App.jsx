@@ -4,6 +4,12 @@ import iconCheck from '@/assets/icons/icon-check.svg';
 import iconCross from '@/assets/icons/icon-cross.svg';
 import { useState } from 'react';
 
+const FILTERS = [
+  { value: 'all', label: 'All' },
+  { value: 'active', label: 'Active' },
+  { value: 'completed', label: 'Completed' },
+];
+
 function App() {
   const [todos, setTodos] = useState([
     { id: 1, text: 'Complete online JavaScript course', completed: true },
@@ -11,6 +17,7 @@ function App() {
     { id: 3, text: '10 minutes meditation', completed: false },
   ]);
   const [newText, setNewText] = useState('');
+  const [filter, setFilter] = useState('all');
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -29,8 +36,16 @@ function App() {
   const handleDelete = (id) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
+  const handleClearCompleted = () => {
+    setTodos(todos.filter((todo) => !todo.completed));
+  };
 
   const itemsLeft = todos.filter((todo) => !todo.completed).length;
+  const visibleTodos = todos.filter((todo) => {
+    if (filter === 'active') return !todo.completed;
+    if (filter === 'completed') return todo.completed;
+    return true;
+  });
 
   return (
     <div className={styles.page}>
@@ -57,7 +72,7 @@ function App() {
 
         <div className={styles.card}>
           <ul className={styles.list}>
-            {todos.map((todo) => (
+            {visibleTodos.map((todo) => (
               <li className={styles.item} key={todo.id}>
                 <button
                   className={`${styles.circle} ${todo.completed ? styles.circleDone : ''}`}
@@ -85,13 +100,19 @@ function App() {
           <div className={styles.footer}>
             <span>{itemsLeft} items left</span>
             <div className={styles.filters}>
-              <button className={styles.active} type="button">
-                All
-              </button>
-              <button type="button">Active</button>
-              <button type="button">Completed</button>
+              {FILTERS.map(({ value, label }) => (
+                <button
+                  key={value}
+                  className={filter === value ? styles.active : ''}
+                  type="button"
+                  aria-pressed={filter === value}
+                  onClick={() => setFilter(value)}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
-            <button className={styles.clear} type="button">
+            <button className={styles.clear} type="button" onClick={handleClearCompleted}>
               Clear Completed
             </button>
           </div>
