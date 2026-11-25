@@ -6,12 +6,18 @@ import TodoItem from '@/components/TodoItem/TodoItem.jsx';
 import {
   closestCenter,
   DndContext,
+  KeyboardSensor,
   MouseSensor,
   TouchSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 
 const getInitialTheme = () => {
   const saved = localStorage.getItem('theme');
@@ -19,6 +25,9 @@ const getInitialTheme = () => {
 
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 };
+
+const pluralizeItems = (count) => `${count} ${count === 1 ? 'item' : 'items'} left`;
+
 const FILTERS = [
   { value: 'all', label: 'All' },
   { value: 'active', label: 'Active' },
@@ -34,15 +43,17 @@ function App() {
   const [newText, setNewText] = useState('');
   const [filter, setFilter] = useState('all');
   const [theme, setTheme] = useState(getInitialTheme);
+  const [status, setStatus] = useState('');
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem('theme', theme);
-  });
+  }, [theme]);
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
   const handleDragEnd = (event) => {
@@ -56,25 +67,41 @@ function App() {
   const handleThemeToggle = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
+  const announce = (message, nextTodos) => {
+    const left = nextTodos.filter((todo) => !todo.completed).length;
+    setStatus(`${message}. ${pluralizeItems(left)}.`);
+  };
   const handleSubmit = (event) => {
     event.preventDefault();
 
     const text = newText.trim();
     if (!text) return;
 
-    setTodos([...todos, { id: Date.now(), text, completed: false }]);
+    const nextTodos = [...todos, { id: Date.now(), text, completed: false }];
+    setTodos(nextTodos);
     setNewText('');
+    announce(`Added "${text}"`, nextTodos);
   };
   const handleToggle = (id) => {
-    setTodos(
-      todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)),
+    const target = todos.find((todo) => todo.id === id);
+    const nextTodos = todos.map((todo) =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo,
     );
+    setTodos(nextTodos);
+    announce(`"${target.text}" marked as ${target.completed ? 'active' : 'completed'}`, nextTodos);
   };
   const handleDelete = (id) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+    const target = todos.find((todo) => todo.id === id);
+    const nextTodos = todos.filter((todo) => todo.id !== id);
+    setTodos(nextTodos);
+    announce(`Deleted "${target.text}"`, nextTodos);
   };
   const handleClearCompleted = () => {
-    setTodos(todos.filter((todo) => !todo.completed));
+    if (!todos.some((todo) => todo.completed)) return;
+
+    const nextTodos = todos.filter((todo) => !todo.completed);
+    setTodos(nextTodos);
+    announce('Cleared completed todos', nextTodos);
   };
 
   const itemsLeft = todos.filter((todo) => !todo.completed).length;
@@ -102,8 +129,12 @@ function App() {
         </header>
 
         <form className={styles.newTodo} onSubmit={handleSubmit}>
-          <span className={styles.circle}></span>
+          <span className={styles.circle} aria-hidden="true"></span>
+          <label className={styles.srOnly} htmlFor="new-todo">
+            Create a new todo
+          </label>
           <input
+            id="new-todo"
             className={styles.input}
             type="text"
             placeholder="Create a new todo..."
@@ -136,7 +167,7 @@ function App() {
           </DndContext>
 
           <div className={styles.footer}>
-            <span>{itemsLeft} items left</span>
+            <span>{pluralizeItems(itemsLeft)}</span>
             <div className={styles.filters}>
               {FILTERS.map(({ value, label }) => (
                 <button
@@ -156,6 +187,9 @@ function App() {
           </div>
         </div>
         <p className={styles.hint}>Drag and drop to reorder list</p>
+        <p className={styles.srOnly} role="status">
+          {status}
+        </p>
       </main>
     </div>
   );

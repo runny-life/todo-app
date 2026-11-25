@@ -101,6 +101,12 @@
   background: transparent;
   outline: none;
 
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: rem(6px);
+    border-radius: 2px;
+  }
+
   &::placeholder {
     color: var(--text-muted);
   }
@@ -288,4 +294,13 @@
   z-index: 1;
   background: var(--card-bg);
   box-shadow: $box-shadow;
+}
+
+.item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.srOnly {
+  @include visually-hidden;
 }
